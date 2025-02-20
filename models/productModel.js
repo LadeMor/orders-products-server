@@ -4,9 +4,14 @@ const Product = {
   getAll: (limit, offset) =>
     db.any("SELECT " +
       " p.id AS product_id, " +
+      " p.serial_number," +
+      " p.is_new," +
+      " p.photo," +
       " p.title, " +
       " p.order_id," +
-      " json_agg(" +
+      " p.product_type," +
+      " p.specification," +
+      " json_agg(" +  
       " DISTINCT jsonb_build_object(" +
       " 'id', pr.id, " +
       " 'value', pr.value, " +
@@ -14,7 +19,7 @@ const Product = {
       " 'is_default', pr.is_default" +
       " )" +
       " ) AS prices," +
-      "json_agg(" +
+      " json_agg(" +
       " DISTINCT jsonb_build_object(" +
       "'id', g.id, " +
       "'start_date', g.start_date, " +
@@ -32,9 +37,14 @@ const Product = {
     db.any(
       "SELECT " +
       " p.id AS product_id, " +
+      " p.serial_number, " +
+      " p.is_new," +
+      " p.photo," +
       " p.title, " +
-      " p.order_id, " +
-      " json_agg(" +
+      " p.order_id," +
+      " p.product_type," +
+      " p.specification," +
+      " json_agg(" + 
       " DISTINCT jsonb_build_object(" +
       " 'id', pr.id, " +
       " 'value', pr.value, " +
