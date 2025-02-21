@@ -4,7 +4,10 @@ exports.getProducts = async (req, res, next) => {
   try {
     const limit = parseInt(req.query.limit) || 10;
     const offset = parseInt(req.query.offset) || 0;
-    const products = await Product.getAll(limit, offset);
+    const product_type = req.query.productType || null;
+    const specification = req.query.specification || null;
+
+    const products = await Product.getAll(product_type, specification, limit, offset);
     res.json(products);
   } catch (err) {
     next(err);

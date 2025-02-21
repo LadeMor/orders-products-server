@@ -1,8 +1,8 @@
 const db = require("../config/db");
 
 const Product = {
-  getAll: (limit, offset) =>
-    db.any(`SELECT 
+  getAll: (productType, specification, limit, offset) =>{
+    return db.any(`SELECT 
        p.id AS product_id, 
        p.serial_number,
        p.is_new,
@@ -23,14 +23,18 @@ const Product = {
       DISTINCT jsonb_build_object(
       'id', g.id, 
       'start_date', g.start_date, 
-      'end_date', g.end_date) ) AS guarantees
+      'end_date', g.end_date) ) AS guarantees,
+      (SELECT COUNT(*) FROM products) AS total_products
       FROM products p
       LEFT JOIN orders o ON p.order_id = o.id
       LEFT JOIN prices pr ON p.id = pr.product_id
       LEFT JOIN guarantees g ON p.id = g.product_id
+      WHERE 
+        ($1 IS NULL OR p.product_type = $1) AND
+        ($2 IS NULL OR p.specification = $2)
       GROUP BY p.id, o.title
-       LIMIT $1 OFFSET $2;`,
-      [limit, offset]),
+       LIMIT $3 OFFSET $4;`,
+      [productType || null, specification || null, limit, offset])},
 
   getByOrderId: (orderId, limit, offset) =>
     db.any(
@@ -57,7 +61,8 @@ const Product = {
        DISTINCT jsonb_build_object(
        'id', g.id, 
        'start_date', g.start_date, 
-       'end_date', g.end_date )) AS guarantees 
+       'end_date', g.end_date )) AS guarantees ,
+       (SELECT COUNT(*) FROM products) AS total_products
       FROM products p 
       LEFT JOIN orders o ON p.order_id = o.id
       LEFT JOIN prices pr ON p.id = pr.product_id 
