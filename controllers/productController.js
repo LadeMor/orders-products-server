@@ -22,3 +22,16 @@ exports.getProductsByOrder = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getProductsFilters = async (req, res, next) => {
+  try{
+    const filters = await Product.getFilters();
+    if (!filters || filters.length === 0) {
+      return res.status(200).json({ product_types: [], specifications: [] }); 
+    }
+
+    res.json(filters);
+  }catch(err){
+    next(err);
+  }
+}

@@ -67,6 +67,15 @@ const Product = {
       LIMIT $2 OFFSET $3;`,
       [orderId, limit, offset]
     ),
+
+    getFilters: () => {
+      return db.any(`
+                SELECT 
+                ARRAY_AGG(DISTINCT product_type) AS product_types, 
+                ARRAY_AGG(DISTINCT specification) AS specifications 
+            FROM products
+      `)
+    }
 };
 
 module.exports = Product;
