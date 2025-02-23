@@ -7,8 +7,14 @@ const productsRoutes = require("./routes/products");
 const guaranteesRoutes = require("./routes/guarantees");
 const pricesRouter = require("./routes/prices");
 
+const allowedOrigins = ["https://orders-products-f82x.onrender.com"];
+
 const app = express();
-app.use(cors());
+
+app.use(cors({
+    origin: allowedOrigins, 
+    credentials: true 
+}));
 app.use(express.json());
 
 app.use("/api/orders", ordersRoutes);
